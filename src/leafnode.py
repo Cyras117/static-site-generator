@@ -11,8 +11,8 @@ class LeafNode(HTMLnode):
             return self.value
         else:
             if len(self.props) <= 0:
-                return f'<{self.tag}>{self.value}<{self.tag}/>'
-            return f'<{self.tag}{self.props_to_html()}>{self.value}<{self.tag}/>'
+                return f'<{self.tag}>{self.value}</{self.tag}>'
+            return f'<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>'
 
     def text_node_to_html_node(text_node):
         match text_node.text_type:

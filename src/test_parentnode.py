@@ -19,7 +19,7 @@ class TestParentNode (unittest.TestCase):
             ],{"test":"props"}),
         ],{"test0":"props0"},
         )
-        self.assertEqual(node.to_html(), '<p test0="props0"><b>Bold text<b/>Normal text<i>italic text<i/>Normal text<p2 test="props"><i2>italic text<i2/>Normal text2<p2><p>')
+        self.assertEqual(node.to_html(), '<p test0="props0"><b>Bold text</b>Normal text<i>italic text</i>Normal text<p2 test="props"><i2>italic text</i2>Normal text2</p2></p>')
 
     def test_no_tag(self):
         with self.assertRaises(ValueError):

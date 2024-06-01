@@ -19,5 +19,5 @@ class ParentNode(HTMLnode):
         
         if self.tag != None:
             str_return = f'<{self.tag}{self.props_to_html()}>{str_return}'
-            return f'{str_return}<{self.tag}>'
+            return f'{str_return}</{self.tag}>'
         return str_return
