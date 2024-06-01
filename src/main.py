@@ -2,7 +2,7 @@ from textnode import TextNode
 from htmlnode import HTMLnode
 from leafnode import LeafNode
 from parentnode import ParentNode
-from utils import split_nodes_delimiter
+from utils import split_nodes_delimiter,extract_markdown_images,extract_markdown_links
 
 def main():
     node = ParentNode(
@@ -19,17 +19,15 @@ def main():
     ],{"test0":"props0"},
     )
     #print(node.to_html())
+    #n = [TextNode("This is text with a `code block` word", "text"),TextNode("This is text with a `code block` word2", "text2")]
+    #b = split_nodes_delimiter(n,"`","code")
 
     # print(TextNode("This is a text node", "bold", "https://www.boot.dev"))
     # print(HTMLnode(None,None,[],{"href": "https://www.google.com"}))
     # print(LeafNode("p", "This is a paragraph of text.").render())
     # print(LeafNode("a", "Click me!", {"href": "https://www.google.com"}).render())
     #print(LeafNode.text_node_to_html_node(TextNode("This is a text node", "text", "https://www.boot.dev")).render())
-
-    n = [TextNode("This is text with a `code block` word", "text"),TextNode("This is text with a `code block` word2", "text2")]
-
-    b = split_nodes_delimiter(n,"`","code")
-
-    print(b)
+    #print(extract_markdown_images("This is text with an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and ![another](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/dfsdkjfd.png)"))
+    print(extract_markdown_links("This is text with a [link](https://www.example.com) and [another](https://www.example.com/another)"))
 
 main()
