@@ -6,7 +6,7 @@ class HTMLnode:
         self.props = props
     
     def __repr__(self):
-        return f"HMLNode(TAG={self.tag}, VALUE={self.value}, CHILDREN={self.children}, PROPS={self.props}"
+        return f"HMLNode(TAG={self.tag}, VALUE={self.value}, CHILDREN={self.children}, PROPS={self.props})"
 
     def to_html(self):
         raise NotImplementedError("Not done yet")

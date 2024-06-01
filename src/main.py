@@ -17,11 +17,12 @@ def main():
         ],{"test":"props"}),
     ],{"test0":"props0"},
     )
-    print(node.to_html())
+    #print(node.to_html())
 
-    print(TextNode("This is a text node", "bold", "https://www.boot.dev"))
-    print(HTMLnode(None,None,[],{"href": "https://www.google.com"}))
-    print(LeafNode("p", "This is a paragraph of text.").render())
-    print(LeafNode("a", "Click me!", {"href": "https://www.google.com"}).render())
+    # print(TextNode("This is a text node", "bold", "https://www.boot.dev"))
+    # print(HTMLnode(None,None,[],{"href": "https://www.google.com"}))
+    # print(LeafNode("p", "This is a paragraph of text.").render())
+    # print(LeafNode("a", "Click me!", {"href": "https://www.google.com"}).render())
+    print(LeafNode.text_node_to_html_node(TextNode("This is a text node", "text", "https://www.boot.dev")).render())
 
 main()
