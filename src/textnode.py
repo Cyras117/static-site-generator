@@ -1,5 +1,5 @@
 class TextNode:
-    def __init__(self,text,text_type,url):
+    def __init__(self,text,text_type,url=None):
         self.text = text
         self.text_type = text_type
         self.url = url
@@ -10,4 +10,6 @@ class TextNode:
         return False
     
     def __repr__(self):
-        return f'TextNode({self.text.upper()}, {self.text_type.upper()}, {self.url.upper()})'
+        if self.url == None:
+            return f'TextNode({self.text}, {self.text_type})'    
+        return f'TextNode({self.text}, {self.text_type}, {self.url})'
