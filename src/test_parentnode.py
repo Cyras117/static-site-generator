@@ -32,7 +32,6 @@ class TestParentNode (unittest.TestCase):
                 LeafNode(None, "Normal text"),
             ]
             )
-            
     
 
 

@@ -61,5 +61,39 @@ class TestUils (unittest.TestCase):
         expected = [("link", "https://www.example.com"), ("another", "https://www.example.com/another")]
         self.assertListEqual(u.extract_markdown_links(txt),expected)
 
+    #split_images===============================================================================================================
+    def test_split_node_images_eq(self):
+        nodes = [TextNode(
+            "This is text with an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and another ![second image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/3elNhQu.png)",
+            "text",
+            )]
+        expected = [TextNode("This is text with an ", "text"), TextNode("image", "image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"), TextNode(" and another ", "text"), TextNode("second image", "image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/3elNhQu.png")]
+        self.assertListEqual(u.split_nodes_images(nodes),expected)
+
+    def test_split_node_images_no_images(self):
+        nodes = [TextNode(
+            "This is text with an not image and another not image",
+            "text",
+            )]
+        expected = [TextNode("This is text with an not image and another not image", "text")]
+        self.assertListEqual(u.split_nodes_images(nodes),expected)
+
+    #split_links===============================================================================================================
+    def test_split_node_links_eq(self):
+        nodes = [TextNode(
+            "This is text with a [link](https://www.example.com) and [another](https://www.example.com/another)",
+            "text",
+        )]
+        expected = [TextNode("This is text with a ", "text"), TextNode("link", "link", "https://www.example.com"), TextNode(" and ", "text"), TextNode("another", "link", "https://www.example.com/another")]
+        self.assertListEqual(u.split_nodes_link(nodes),expected)
+
+    def test_split_node_images_no_images(self):
+        nodes = [TextNode(
+            "This is text with a link and link",
+            "text",
+        )]
+        expected = [TextNode("This is text with a link and link", "text")]
+        self.assertListEqual(u.split_nodes_images(nodes),expected)
+
 if __name__ == "__main__":
     unittest.main()
