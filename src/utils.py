@@ -24,18 +24,28 @@ def text_node_to_html_node(text_node):
             return LeafNode(tag="img",value="",props={"src":text_node.url,"alt":"Alt Text"})
         case _:
             raise Exception("Invalid text type")
-        
-def split_nodes_delimiter(old_nodes, delimiter, text_type):
-    list_text_nodes = list(map(lambda node:node.text.split(delimiter),old_nodes))
-    list_text_nodes_new = []
-    for l in list_text_nodes:
-        for i in range(0,len(l)):
-            if i % 2 != 0:
-                list_text_nodes_new.append(TextNode(text=l[i],text_type=text_type))
-            else:
-                list_text_nodes_new.append(TextNode(text=l[i],text_type="text"))
-    return list_text_nodes_new
 
+def split_nodes_delimiter(old_nodes, delimiter, text_type):
+    list_return = []
+    for node in old_nodes:
+        s = node.text
+        i = 0
+        start = 0
+        end = 0
+        while i < len(s):
+            if s[i] == delimiter:
+                if i+1 < len(s) and s[i+1] != delimiter:
+                    start = i+1
+                    while i+1 < len(s) and s[i+1]!=delimiter:
+                        i += 1
+                    end = i+1
+                    i+=1
+                    list_return.append(TextNode(s[:start-1:],"text"))
+                    list_return.append(TextNode(s[start:end:],text_type))
+            i += 1
+        list_return.append(TextNode(s[end+1::],"text"))
+    return list_return
+                
 def extract_markdown_images(text):
     return findall(IMAGE_REGEX,text)
 
@@ -75,4 +85,13 @@ def split_nodes_link(old_nodes):
         else:
             list_return.append(TextNode(n.text,"text"))
     return list_return
-        
+
+#TODO:Finish this   
+def text_to_textnodes(text):
+    text_node = [TextNode(text,"text")]
+    text_node_italic = split_nodes_delimiter(old_nodes=text_node,delimiter="*",text_type="italic")
+    text_node_bold = split_nodes_delimiter(old_nodes=text_node_italic,delimiter="**",text_type="bold")
+    text_node_code = split_nodes_delimiter(old_nodes=text_node_italic,delimiter="`",text_type="code")
+
+
+    return text_node_italic
