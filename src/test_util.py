@@ -63,6 +63,7 @@ class TestUils (unittest.TestCase):
 
     #split_images===============================================================================================================
     def test_split_node_images_eq(self):
+        self.maxDiff = None
         nodes = [TextNode(
             "This is text with an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and another ![second image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/3elNhQu.png)",
             "text",
@@ -85,15 +86,25 @@ class TestUils (unittest.TestCase):
             "text",
         )]
         expected = [TextNode("This is text with a ", "text"), TextNode("link", "link", "https://www.example.com"), TextNode(" and ", "text"), TextNode("another", "link", "https://www.example.com/another")]
-        self.assertListEqual(u.split_nodes_link(nodes),expected)
+        self.assertListEqual(u.split_nodes_links(nodes),expected)
 
-    def test_split_node_images_no_images(self):
+    def test_split_node_liks_no_liks(self):
         nodes = [TextNode(
             "This is text with a link and link",
             "text",
         )]
         expected = [TextNode("This is text with a link and link", "text")]
-        self.assertListEqual(u.split_nodes_images(nodes),expected)
+        self.assertListEqual(u.split_nodes_links(nodes),expected)
+    #text_to_textnodes===============================================================================================================
+    def test_text_to_textnodes_eq(self):
+        text = "This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)"
+        expected = [TextNode("This is ", "text"), TextNode("text", "bold"), TextNode(" with an ", "text"), TextNode("italic", "italic"), TextNode(" word and a ", "text"), TextNode("code block", "code"), TextNode(" and an ", "text"), TextNode("image", "image", "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"), TextNode(" and a ", "text"), TextNode("link", "link", "https://boot.dev")]
+        self.assertListEqual(u.text_to_textnodes(text),expected)
+
+    def test_text_to_textnodes_only_text(self):
+        text = "Text with no delimeters, images or links"
+        expected = [TextNode("Text with no delimeters, images or links", "text")]
+        self.assertListEqual(u.text_to_textnodes(text),expected)
 
 if __name__ == "__main__":
     unittest.main()

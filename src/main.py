@@ -2,7 +2,7 @@ from textnode import TextNode
 from htmlnode import HTMLnode
 from leafnode import LeafNode
 from parentnode import ParentNode
-from utils import split_nodes_delimiter,extract_markdown_images,extract_markdown_links,split_nodes_images,split_nodes_link,text_to_textnodes
+from utils import split_nodes_delimiter,extract_markdown_images,extract_markdown_links,split_nodes_images,split_nodes_links,text_to_textnodes
 
 def main():
     # node = ParentNode(
@@ -37,11 +37,13 @@ def main():
     #     "This is text with a [link](https://www.example.com) and [another](https://www.example.com/another)",
     #     "text",
     # )
-    #print(split_nodes_images([tn]))
+    # print(split_nodes_images([tn]))
+    # print(extract_markdown_images(tn.text))
     #print(split_nodes_link([tn2]))
-    # txt = "This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)"
-    # print(text_to_textnodes(txt))
-    list_txt = [TextNode("This is text with a `code block` word", "text"),TextNode("This is text with a `code block` word2", "text2")]
-    print(split_nodes_delimiter(list_txt,"`","code"))
+    txt = "This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)"
+    print(text_to_textnodes(txt))
+    # list_txt = [TextNode("This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)", "text")]
+    # print(split_nodes_delimiter(list_txt,"**","bold"))
+    # print(split_nodes_delimiter(list_txt,"*","italic"))
 
 main()
