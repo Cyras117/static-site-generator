@@ -2,7 +2,7 @@ from textnode import TextNode
 from htmlnode import HTMLnode
 from leafnode import LeafNode
 from parentnode import ParentNode
-from utils import split_nodes_delimiter,extract_markdown_images,extract_markdown_links,split_nodes_images,split_nodes_links,text_to_textnodes
+import utils as u
 
 def main():
     # node = ParentNode(
@@ -40,10 +40,13 @@ def main():
     # print(split_nodes_images([tn]))
     # print(extract_markdown_images(tn.text))
     #print(split_nodes_link([tn2]))
-    txt = "This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)"
-    print(text_to_textnodes(txt))
+    # txt = "This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)"
+    # print(text_to_textnodes(txt))
     # list_txt = [TextNode("This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)", "text")]
     # print(split_nodes_delimiter(list_txt,"**","bold"))
     # print(split_nodes_delimiter(list_txt,"*","italic"))
+
+    markdown = "This is **bolded** paragraph\n\nThis is another paragraph with *italic* text and `code` here\nThis is the same paragraph on a new line\n\n* This is a list\n* with items\n"
+    print(u.markdown_to_blocks(markdown))
 
 main()
