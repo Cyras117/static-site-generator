@@ -1,5 +1,6 @@
 from re import findall,search
 from text_type import TextType
+from block_type import BlockType
 from leafnode import LeafNode
 from textnode import TextNode
 
@@ -7,7 +8,6 @@ from textnode import TextNode
 IMAGE_REGEX = r"!\[(.*?)\]\((.*?)\)"
 LINK_REGEX = r"\[(.*?)\]\((.*?)\)"
 
-#TODO chang it to ifs
 def text_node_to_html_node(text_node):
     match text_node.text_type:
         case TextType.TEXT:
@@ -138,3 +138,42 @@ def markdown_to_blocks(markdown):
     return blocks_return
 
     
+def block_to_block_type(block_markdown):
+    block_lines = block_markdown.split('\n')
+
+    for line in block_lines:
+        index = 0
+        while len(line) >= 0 and index < len(line) and index < 6:
+            if index +1 < len(line) and block_markdown[index] == '#' and block_markdown[index+1] == ' ':
+                return BlockType.heading
+            index += 1
+
+    if block_markdown[:3:] == '```' and block_markdown[:-3:] == '```':
+        return BlockType.code
+    
+    quotes = True
+    for line in block_lines:
+        if line[0] != '>':
+            quotes = False
+    if quotes:
+        return BlockType.quote
+
+    ulist = True
+    for line in block_lines:
+        if line[0] != '-' or line[0] != '*':
+            ulist = False
+    if ulist:
+        return BlockType.unordered_list
+    
+    olist = True
+    for l in range(0,len(block_lines)):
+        line = block_lines[l]
+        if len(line) >= 3 and line[0].isnumeric() and line[1] == '.' and line[0] == f'{l+1}' and line[2] == ' ':
+            olist = True
+        else:
+            olist = False
+    if olist:
+        return BlockType.ordered_list
+
+    return BlockType.paragraph
+

@@ -110,11 +110,12 @@ class TestUils (unittest.TestCase):
     #markdown_to_blocks===============================================================================================================
     def test_markdown_to_blocks_eq(self):
         markdown = "This is **bolded** paragraph\n\nThis is another paragraph with *italic* text and `code` here\nThis is the same paragraph on a new line\n\n* This is a list\n* with items\n"
-        expected = ['\nThis is **bolded** paragraph', '\nThis is another paragraph with *italic* text and `code` here\nThis is the same paragraph on a new line', '\n* This is a list\n* with items']
+        expected = [
+            '\nThis is **bolded** paragraph', 
+            '\nThis is another paragraph with *italic* text and `code` here\nThis is the same paragraph on a new line', 
+            '\n* This is a list\n* with items'
+            ]
         self.assertListEqual(u.markdown_to_blocks(markdown),expected)
-
-
-
 
 
 if __name__ == "__main__":
