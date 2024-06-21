@@ -3,6 +3,7 @@ from text_type import TextType
 from block_type import BlockType
 from leafnode import LeafNode
 from textnode import TextNode
+import htmlnode
 
 
 IMAGE_REGEX = r"!\[(.*?)\]\((.*?)\)"
@@ -176,4 +177,15 @@ def block_to_block_type(block_markdown):
         return BlockType.ordered_list
 
     return BlockType.paragraph
+def quote_block_to_html_qute(block):
+    #TODO: check if there is block with more than 1 quote
+    block_text = block.replace("```","")
+    return htmlnode.HTMLnode(tag="blockquote",value=block)
 
+def markdown_to_html_node(markdown):
+    mainnode = htmlnode.HTMLnode(tag="div")
+
+    for block in markdown_to_blocks(markdown):
+        if block_to_block_type(block) == BlockType.quote:
+            mainnode.children.append(quote_block_to_html_qute(block))
+    
