@@ -161,7 +161,7 @@ def block_to_block_type(block_markdown):
 
     ulist = True
     for line in block_lines:
-        if line[0] != '-' or line[0] != '*':
+        if line[:2:] != '- ' or line[:2:] != '* ':
             ulist = False
     if ulist:
         return BlockType.unordered_list
@@ -178,14 +178,45 @@ def block_to_block_type(block_markdown):
 
     return BlockType.paragraph
 def quote_block_to_html_qute(block):
-    #TODO: check if there is block with more than 1 quote
-    block_text = block.replace("```","")
-    return htmlnode.HTMLnode(tag="blockquote",value=block)
+    block_lines = block.split("\n")
+    block_text = ""
+    if len(block_lines <= 1):
+        block_text = block.replace(">","")
+    else:
+        for line in block_lines:
+            block_text = block_text + " " + line
+    return htmlnode.HTMLnode(tag="blockquote",value=block_text)
+
+def unorderedlist_block_to_html_ul(block):
+    nodeul = htmlnode.HTMLnode(tag="ul")
+    block_lines = block.split("\n")
+    for line in block_lines:
+        line_text = line.replace("* ","").replace("- ","")
+        linode = htmlnode.HTMLnode(tag="li",value=line_text)
+        nodeul.children.append(linode)
+    return nodeul
+
+def orderedlist_block_to_html_ol(block):
+    nodeol = htmlnode.HTMLnode(tag="ol")
+    block_lines = block.split("\n")
+    for line in block_lines:
+        line_text = line[3::]
+        linode = htmlnode.HTMLnode(tag="li",value=line_text)
+        nodeol.children.append(linode)
+    return nodeol
+
 
 def markdown_to_html_node(markdown):
     mainnode = htmlnode.HTMLnode(tag="div")
 
     for block in markdown_to_blocks(markdown):
-        if block_to_block_type(block) == BlockType.quote:
+        block_type = block_to_block_type(block)
+        if block_type == BlockType.quote:
             mainnode.children.append(quote_block_to_html_qute(block))
-    
+        if block_type == BlockType.unordered_list:
+            mainnode.children.append(unorderedlist_block_to_html_ul(block))
+        if block_type == BlockType.ordered_list:
+            mainnode.children.append(orderedlist_block_to_html_ol(block))
+        
+
+    return mainnode    
