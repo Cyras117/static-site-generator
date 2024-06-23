@@ -211,6 +211,24 @@ def code_block_to_html_code(block):
     codenode.children.append(htmlnode.HTMLnode(tag="pre",value=block_text))
     return codenode
 
+def head_block_to_html_head(block):
+    block_lines = block.split("\n")
+    listnodes = []
+    for line in block_lines:
+        if line.count("#") == 1:
+            listnodes.append(htmlnode.HTMLnode(tag="h1",value=line.strip("#")))
+        if line.count("#") == 2:
+            listnodes.append(htmlnode.HTMLnode(tag="h2",value=line.strip("#")))
+        if line.count("#") == 3:
+            listnodes.append(htmlnode.HTMLnode(tag="h3",value=line.strip("#")))
+        if line.count("#") == 4:
+            listnodes.append(htmlnode.HTMLnode(tag="h4",value=line.strip("#")))
+        if line.count("#") == 5:
+            listnodes.append(htmlnode.HTMLnode(tag="h5",value=line.strip("#")))
+        if line.count("#") == 6:
+            listnodes.append(htmlnode.HTMLnode(tag="h6",value=line.strip("#")))
+    return listnodes
+
 def markdown_to_html_node(markdown):
     mainnode = htmlnode.HTMLnode(tag="div")
     for block in markdown_to_blocks(markdown):
@@ -221,4 +239,10 @@ def markdown_to_html_node(markdown):
             mainnode.children.append(unorderedlist_block_to_html_ul(block))
         if block_type == BlockType.ordered_list:
             mainnode.children.append(orderedlist_block_to_html_ol(block))
+        if block_type == BlockType.code:
+            mainnode.children.append(code_block_to_html_code(block))
+        if block_type == BlockType.heading:
+            mainnode.children = mainnode.children + head_block_to_html_head(block)
+        if block_type == BlockType.paragraph:
+            mainnode.children.append(htmlnode.HTMLnode(tag="p",value=block))
     return mainnode    
