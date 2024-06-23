@@ -205,10 +205,14 @@ def orderedlist_block_to_html_ol(block):
         nodeol.children.append(linode)
     return nodeol
 
+def code_block_to_html_code(block):
+    codenode = htmlnode.HTMLnode(tag="code")
+    block_text = block.replace("```","")
+    codenode.children.append(htmlnode.HTMLnode(tag="pre",value=block_text))
+    return codenode
 
 def markdown_to_html_node(markdown):
     mainnode = htmlnode.HTMLnode(tag="div")
-
     for block in markdown_to_blocks(markdown):
         block_type = block_to_block_type(block)
         if block_type == BlockType.quote:
@@ -217,6 +221,4 @@ def markdown_to_html_node(markdown):
             mainnode.children.append(unorderedlist_block_to_html_ul(block))
         if block_type == BlockType.ordered_list:
             mainnode.children.append(orderedlist_block_to_html_ol(block))
-        
-
     return mainnode    
