@@ -246,3 +246,12 @@ def markdown_to_html_node(markdown):
         if block_type == BlockType.paragraph:
             mainnode.children.append(htmlnode.HTMLnode(tag="p",value=block))
     return mainnode    
+
+def extract_title(markdown):
+    lines = markdown.split("\n")
+    for line in lines:
+        if line.count("#") == 1 and line.startswith("#"):
+            return line.replace("# ","")
+
+def generate_page(from_path, template_path, dest_path):
+    print(f"\nGenerating page from {from_path} to {dest_path} using {template_path}")
