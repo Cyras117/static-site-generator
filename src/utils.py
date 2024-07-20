@@ -128,14 +128,15 @@ def markdown_to_blocks(markdown):
     blocks = markdown.split("\n\n")
     blocks_return = []
     for block in blocks:
-        block_apend = ""
+        block_apend = []
         block_lines = block.split("\n")
-        for line in block_lines:
-            l = line.lstrip(" ").rstrip(" ")
-            if len(l)<=0:
-                continue
-            block_apend = block_apend + "\n"+l
-        blocks_return.append(block_apend)
+        if len(block_lines) > 1:
+            for line in block_lines:
+                l = line.lstrip(" ").rstrip(" ")
+                block_apend.append(l)
+            blocks_return.append("\n".join(block_apend))
+        elif len(block_lines) > 0:
+            blocks_return.append(block_lines[0])
     return blocks_return
 
     
@@ -180,7 +181,7 @@ def block_to_block_type(block_markdown):
 def quote_block_to_html_qute(block):
     block_lines = block.split("\n")
     block_text = ""
-    if len(block_lines <= 1):
+    if len(block_lines) <= 1:
         block_text = block.replace(">","")
     else:
         for line in block_lines:
@@ -235,10 +236,16 @@ def markdown_to_html_node(markdown):
         block_type = block_to_block_type(block)
         if block_type == BlockType.quote:
             mainnode.children.append(quote_block_to_html_qute(block))
+        """
+        TODO:Fix ul and ol
+        when appending, it appends to all the mainnode children
+        """
         if block_type == BlockType.unordered_list:
-            mainnode.children.append(unorderedlist_block_to_html_ul(block))
+            ulnode = unorderedlist_block_to_html_ul(block)
+            mainnode.children.append(ulnode)
         if block_type == BlockType.ordered_list:
-            mainnode.children.append(orderedlist_block_to_html_ol(block))
+            olnode = orderedlist_block_to_html_ol(block)
+            mainnode.children.append(olnode)
         if block_type == BlockType.code:
             mainnode.children.append(code_block_to_html_code(block))
         if block_type == BlockType.heading:
@@ -252,6 +259,3 @@ def extract_title(markdown):
     for line in lines:
         if line.count("#") == 1 and line.startswith("#"):
             return line.replace("# ","")
-
-def generate_page(from_path, template_path, dest_path):
-    print(f"\nGenerating page from {from_path} to {dest_path} using {template_path}")
