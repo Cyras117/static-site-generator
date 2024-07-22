@@ -25,8 +25,10 @@ def generate_page(from_path, template_path, dest_path):
     print(f"\nGenerating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path,'r') as mdfile:
         mdstring = mdfile.read()
+        
     with open(template_path,'r') as htmlfile:
         htmlstring = htmlfile.read()
+
     mainnode = u.markdown_to_html_node(mdstring)
     print(mainnode)
 
@@ -36,7 +38,7 @@ def generate_page(from_path, template_path, dest_path):
 
 def main():
     #transferFiles(os.getcwd()+"/static",os.getcwd()+"/public",True)
-    wd = os.getcwd()
-    generate_page(f'{wd}/content/index.md',f'{wd}/template.html','')
-
+    # wd = os.getcwd()
+    # generate_page(f'{wd}/content/index.md',f'{wd}/template.html','')
+    print("hello world")
 main()

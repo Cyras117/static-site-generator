@@ -1,30 +1,20 @@
 from re import findall,search
-from text_type import TextType
 from block_type import BlockType
 from leafnode import LeafNode
-from textnode import TextNode
-import htmlnode
+from htmlnode import HTMLNode
+from textnode import (
+    TextNode,
+    BOLD,
+    IMAGE,
+    ITALIC,
+    CODE,
+    LINK,
+    TEXT
+)
 
 
 IMAGE_REGEX = r"!\[(.*?)\]\((.*?)\)"
 LINK_REGEX = r"\[(.*?)\]\((.*?)\)"
-
-def text_node_to_html_node(text_node):
-    match text_node.text_type:
-        case TextType.TEXT:
-            return LeafNode(tag=None,value=text_node.text)
-        case TextType.BOLD:
-            return LeafNode(tag="b",value=text_node.text)
-        case TextType.ITALIC:
-            return LeafNode(tag="i",value=text_node.text)
-        case TextType.CODE:
-            return LeafNode(tag="code",value=text_node.text)
-        case TextType.LINK:
-            return LeafNode(tag="a",value=text_node.text,props={"href":text_node.url})
-        case TextType.IMAGE:
-            return LeafNode(tag="img",value="",props={"src":text_node.url,"alt":"Alt Text"})
-        case _:
-            raise Exception("Invalid text type")
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     list_return = []
@@ -44,23 +34,23 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                             end = i+1
                             i=end
                             if not (end+1 < len(s) and s[end+1] == delimiter):
-                                list_return.append(TextNode(s[:start-1:],TextType.TEXT))
+                                list_return.append(TextNode(s[:start-1:],TEXT))
                                 list_return.append(TextNode(s[start:end:],text_type))
                     i += 1
-                list_return.append(TextNode(s[end+1::],TextType.TEXT))
+                list_return.append(TextNode(s[end+1::],TEXT))
             else:
                 saux = s
                 while True:
                     start = saux.find(delimiter)+2
                     end = saux.find(delimiter,start)
-                    list_return.append(TextNode(saux[:start-2:],TextType.TEXT))
+                    list_return.append(TextNode(saux[:start-2:],TEXT))
                     list_return.append(TextNode(saux[start:end:],text_type))
                     if end + 2 < len(saux):
                         saux = saux[end+2::]
                     if saux.find(delimiter) == -1:
                         break
                 if end + 2 < len(saux) and len(saux[end+2])>0:
-                    list_return.append(TextNode(s[end+2:],TextType.TEXT))
+                    list_return.append(TextNode(s[end+2:],TEXT))
         else:
             list_return.append(node)
 
@@ -82,13 +72,13 @@ def split_nodes_images(old_nodes):
             for img in extracted:
                 start = mobject.span()[0]
                 end = mobject.span()[1]
-                list_return.append(TextNode(auxtext[:start:],TextType.TEXT)) 
-                list_return.append(TextNode(img[0],TextType.IMAGE,img[1]))
+                list_return.append(TextNode(auxtext[:start:],TEXT)) 
+                list_return.append(TextNode(img[0],IMAGE,img[1]))
                 auxtext = auxtext[end::]
                 if search(IMAGE_REGEX,auxtext):
                     mobject = search(IMAGE_REGEX,auxtext)
             if len(auxtext) > 0:
-                list_return.append(TextNode(auxtext,TextType.TEXT))
+                list_return.append(TextNode(auxtext,TEXT))
         else:   
             list_return.append(n)
     return list_return
@@ -103,22 +93,22 @@ def split_nodes_links(old_nodes):
             for img in extracted:
                 start = mobject.span()[0]
                 end = mobject.span()[1]
-                list_return.append(TextNode(auxtext[:start:],TextType.TEXT)) 
-                list_return.append(TextNode(img[0],TextType.LINK,img[1]))
+                list_return.append(TextNode(auxtext[:start:],TEXT)) 
+                list_return.append(TextNode(img[0],LINK,img[1]))
                 auxtext = auxtext[end::]
                 if search(LINK_REGEX,auxtext):
                     mobject = search(LINK_REGEX,auxtext)
             if len(auxtext) > 0:
-                list_return.append(TextNode(auxtext,TextType.TEXT))
+                list_return.append(TextNode(auxtext,TEXT))
         else:   
             list_return.append(n)
     return list_return
   
 def text_to_textnodes(text):
-    text_node = [TextNode(text,TextType.TEXT)]
-    text_node_bold = split_nodes_delimiter(old_nodes=text_node,delimiter="**",text_type=TextType.BOLD)
-    text_node_italic = split_nodes_delimiter(old_nodes=text_node_bold,delimiter="*",text_type=TextType.ITALIC)
-    text_node_code = split_nodes_delimiter(old_nodes=text_node_italic,delimiter="`",text_type=TextType.CODE)
+    text_node = [TextNode(text,TEXT)]
+    text_node_bold = split_nodes_delimiter(old_nodes=text_node,delimiter="**",text_type=BOLD)
+    text_node_italic = split_nodes_delimiter(old_nodes=text_node_bold,delimiter="*",text_type=ITALIC)
+    text_node_code = split_nodes_delimiter(old_nodes=text_node_italic,delimiter="`",text_type=CODE)
     text_node_images = split_nodes_images(text_node_code)
     text_node_links = split_nodes_links(text_node_images)
     return text_node_links 
@@ -186,30 +176,30 @@ def quote_block_to_html_qute(block):
     else:
         for line in block_lines:
             block_text = block_text + " " + line
-    return htmlnode.HTMLnode(tag="blockquote",value=block_text)
+    return HTMLNode(tag="blockquote",value=block_text)
 
 def unorderedlist_block_to_html_ul(block):
-    nodeul = htmlnode.HTMLnode(tag="ul")
+    nodeul = HTMLNode(tag="ul")
     block_lines = block.split("\n")
     for line in block_lines:
         line_text = line.replace("* ","").replace("- ","")
-        linode = htmlnode.HTMLnode(tag="li",value=line_text)
+        linode = HTMLNode(tag="li",value=line_text)
         nodeul.children.append(linode)
     return nodeul
 
 def orderedlist_block_to_html_ol(block):
-    nodeol = htmlnode.HTMLnode(tag="ol")
+    nodeol = HTMLNode(tag="ol")
     block_lines = block.split("\n")
     for line in block_lines:
         line_text = line[3::]
-        linode = htmlnode.HTMLnode(tag="li",value=line_text)
+        linode = HTMLNode(tag="li",value=line_text)
         nodeol.children.append(linode)
     return nodeol
 
 def code_block_to_html_code(block):
-    codenode = htmlnode.HTMLnode(tag="code")
+    codenode = HTMLNode(tag="code")
     block_text = block.replace("```","")
-    codenode.children.append(htmlnode.HTMLnode(tag="pre",value=block_text))
+    codenode.children.append(HTMLNode(tag="pre",value=block_text))
     return codenode
 
 def head_block_to_html_head(block):
@@ -217,41 +207,37 @@ def head_block_to_html_head(block):
     listnodes = []
     for line in block_lines:
         if line.count("#") == 1:
-            listnodes.append(htmlnode.HTMLnode(tag="h1",value=line.strip("#")))
+            listnodes.append(HTMLNode(tag="h1",value=line.strip("#")))
         if line.count("#") == 2:
-            listnodes.append(htmlnode.HTMLnode(tag="h2",value=line.strip("#")))
+            listnodes.append(HTMLNode(tag="h2",value=line.strip("#")))
         if line.count("#") == 3:
-            listnodes.append(htmlnode.HTMLnode(tag="h3",value=line.strip("#")))
+            listnodes.append(HTMLNode(tag="h3",value=line.strip("#")))
         if line.count("#") == 4:
-            listnodes.append(htmlnode.HTMLnode(tag="h4",value=line.strip("#")))
+            listnodes.append(HTMLNode(tag="h4",value=line.strip("#")))
         if line.count("#") == 5:
-            listnodes.append(htmlnode.HTMLnode(tag="h5",value=line.strip("#")))
+            listnodes.append(HTMLNode(tag="h5",value=line.strip("#")))
         if line.count("#") == 6:
-            listnodes.append(htmlnode.HTMLnode(tag="h6",value=line.strip("#")))
+            listnodes.append(HTMLNode(tag="h6",value=line.strip("#")))
     return listnodes
 
 def markdown_to_html_node(markdown):
-    mainnode = htmlnode.HTMLnode(tag="div")
+    mainnode = HTMLNode(tag="div")
     for block in markdown_to_blocks(markdown):
         block_type = block_to_block_type(block)
         if block_type == BlockType.quote:
             mainnode.children.append(quote_block_to_html_qute(block))
-        """
-        TODO:Fix ul and ol
-        when appending, it appends to all the mainnode children
-        """
         if block_type == BlockType.unordered_list:
             ulnode = unorderedlist_block_to_html_ul(block)
             mainnode.children.append(ulnode)
         if block_type == BlockType.ordered_list:
-            olnode = orderedlist_block_to_html_ol(block)
-            mainnode.children.append(olnode)
+            orderedlist_block_to_html_ol(block)
+            ##mainnode.children.append(olnode)
         if block_type == BlockType.code:
             mainnode.children.append(code_block_to_html_code(block))
         if block_type == BlockType.heading:
             mainnode.children = mainnode.children + head_block_to_html_head(block)
         if block_type == BlockType.paragraph:
-            mainnode.children.append(htmlnode.HTMLnode(tag="p",value=block))
+            mainnode.children.append(HTMLNode(tag="p",value=block))
     return mainnode    
 
 def extract_title(markdown):
