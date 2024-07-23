@@ -1,7 +1,16 @@
-from textnode import TextNode
-from htmlnode import HTMLnode
-from leafnode import LeafNode
-from parentnode import ParentNode
+from textnode import (
+    TextNode,
+    IMAGE,
+    TEXT
+)
+from inline_markdown import(
+    split_nodes_image,
+    split_nodes_link
+)
+from htmlnode import (
+    HTMLNode,
+    LeafNode
+)
 import utils as u
 import os,shutil
 
@@ -40,5 +49,12 @@ def main():
     #transferFiles(os.getcwd()+"/static",os.getcwd()+"/public",True)
     # wd = os.getcwd()
     # generate_page(f'{wd}/content/index.md',f'{wd}/template.html','')
-    print("hello world")
+    node = TextNode(
+            "![image](https://www.example.com/image.png)",
+            TEXT,
+        )
+    new_nodes = split_nodes_image([node])
+    TextNode("image", IMAGE, "https://www.example.com/image.png")
+    print(new_nodes)
+
 main()

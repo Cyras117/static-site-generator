@@ -1,117 +1,14 @@
-from re import findall,search
 from block_type import BlockType
-from leafnode import LeafNode
 from htmlnode import HTMLNode
-from textnode import (
-    TextNode,
-    BOLD,
-    IMAGE,
-    ITALIC,
-    CODE,
-    LINK,
-    TEXT
-)
-
-
-IMAGE_REGEX = r"!\[(.*?)\]\((.*?)\)"
-LINK_REGEX = r"\[(.*?)\]\((.*?)\)"
-
-def split_nodes_delimiter(old_nodes, delimiter, text_type):
-    list_return = []
-    for node in old_nodes:
-        s = node.text
-        if delimiter in s: 
-            if len(delimiter) < 2:
-                i = 0
-                start = 0
-                end = 0
-                while i < len(s):
-                    if s[i] == delimiter:
-                        if i+1 < len(s) and s[i+1] != delimiter and i-1 >= 0 and s[i-1] != delimiter:
-                            start = i+1
-                            while i+1 < len(s) and s[i+1]!=delimiter:
-                                i += 1
-                            end = i+1
-                            i=end
-                            if not (end+1 < len(s) and s[end+1] == delimiter):
-                                list_return.append(TextNode(s[:start-1:],TEXT))
-                                list_return.append(TextNode(s[start:end:],text_type))
-                    i += 1
-                list_return.append(TextNode(s[end+1::],TEXT))
-            else:
-                saux = s
-                while True:
-                    start = saux.find(delimiter)+2
-                    end = saux.find(delimiter,start)
-                    list_return.append(TextNode(saux[:start-2:],TEXT))
-                    list_return.append(TextNode(saux[start:end:],text_type))
-                    if end + 2 < len(saux):
-                        saux = saux[end+2::]
-                    if saux.find(delimiter) == -1:
-                        break
-                if end + 2 < len(saux) and len(saux[end+2])>0:
-                    list_return.append(TextNode(s[end+2:],TEXT))
-        else:
-            list_return.append(node)
-
-    return list_return
-                
-def extract_markdown_images(text):
-    return findall(IMAGE_REGEX,text)
-
-def extract_markdown_links(text):
-    return findall(LINK_REGEX,text)
-
-def split_nodes_images(old_nodes):
-    list_return = []
-    for n in old_nodes:
-        auxtext = n.text
-        mobject = search(IMAGE_REGEX,auxtext)
-        extracted = extract_markdown_images(auxtext)
-        if mobject:
-            for img in extracted:
-                start = mobject.span()[0]
-                end = mobject.span()[1]
-                list_return.append(TextNode(auxtext[:start:],TEXT)) 
-                list_return.append(TextNode(img[0],IMAGE,img[1]))
-                auxtext = auxtext[end::]
-                if search(IMAGE_REGEX,auxtext):
-                    mobject = search(IMAGE_REGEX,auxtext)
-            if len(auxtext) > 0:
-                list_return.append(TextNode(auxtext,TEXT))
-        else:   
-            list_return.append(n)
-    return list_return
-
-def split_nodes_links(old_nodes):
-    list_return = []
-    for n in old_nodes:
-        auxtext = n.text
-        mobject = search(LINK_REGEX,auxtext)
-        extracted = extract_markdown_links(auxtext)
-        if mobject:
-            for img in extracted:
-                start = mobject.span()[0]
-                end = mobject.span()[1]
-                list_return.append(TextNode(auxtext[:start:],TEXT)) 
-                list_return.append(TextNode(img[0],LINK,img[1]))
-                auxtext = auxtext[end::]
-                if search(LINK_REGEX,auxtext):
-                    mobject = search(LINK_REGEX,auxtext)
-            if len(auxtext) > 0:
-                list_return.append(TextNode(auxtext,TEXT))
-        else:   
-            list_return.append(n)
-    return list_return
   
-def text_to_textnodes(text):
-    text_node = [TextNode(text,TEXT)]
-    text_node_bold = split_nodes_delimiter(old_nodes=text_node,delimiter="**",text_type=BOLD)
-    text_node_italic = split_nodes_delimiter(old_nodes=text_node_bold,delimiter="*",text_type=ITALIC)
-    text_node_code = split_nodes_delimiter(old_nodes=text_node_italic,delimiter="`",text_type=CODE)
-    text_node_images = split_nodes_images(text_node_code)
-    text_node_links = split_nodes_links(text_node_images)
-    return text_node_links 
+# def text_to_textnodes(text):
+#     text_node = [TextNode(text,TEXT)]
+#     text_node_bold = split_nodes_delimiter(old_nodes=text_node,delimiter="**",text_type=BOLD)
+#     text_node_italic = split_nodes_delimiter(old_nodes=text_node_bold,delimiter="*",text_type=ITALIC)
+#     text_node_code = split_nodes_delimiter(old_nodes=text_node_italic,delimiter="`",text_type=CODE)
+#     text_node_images = split_nodes_images(text_node_code)
+#     text_node_links = split_nodes_links(text_node_images)
+#     return text_node_links 
 
 
 def markdown_to_blocks(markdown):
